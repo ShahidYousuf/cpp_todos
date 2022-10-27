@@ -8,6 +8,7 @@
 
 class Todo {
 private:
+    int _id {};
     std::string _title {};
     bool _completed { false };
 
@@ -20,12 +21,20 @@ public:
         _title(title), _completed(completed)
     {}
 
+    int id() {
+        return _id;
+    }
+
     const std::string &title() {
         return _title;
     }
 
     const bool &completed() {
         return _completed;
+    }
+
+    void id(int &value) {
+        _id = value;
     }
 
     void title(std::string &value) {

@@ -1,10 +1,15 @@
 #include <iostream>
 #include <array>
 #include "todo.h"
+#include "command.h"
+#include "api.h"
 
 int main(int argc, char *argv[]) {
     std::string title {"Sample todo title"};
     bool completed {true};
+
+    Store store = Store(Store::Persistence::FILE);
+    Controller controller = Controller(store);
 
     std::array<std::string, 5> commands {"get", "list", "create", "edit", "delete"};
     if (argc == 1) {
@@ -21,20 +26,21 @@ int main(int argc, char *argv[]) {
         }
 
         if (command == "create") {
-            std::cout << "Creating Todo\n";
+            controller.create();
         } else if (command == "get") {
             std::cout << "Getting todo\n";
         } else if (command == "list") {
-            std::cout << "Listing todos\n";
+            controller.list();
         } else if (command == "edit") {
             std::cout << "Editing todo\n";
         } else if (command == "delete") {
             std::cout << "Deleting todo\n";
         }
+
+
     }
     //Todo todo = Todo(title, completed);
     //std::cout << "Title: " << todo.title() << " Completed: " << todo.completed() << "\n";
-
 
     return 0;
 }
