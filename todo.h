@@ -54,4 +54,15 @@ std::ostream& operator << (std::ostream &out, Todo &todo) {
     return out;
 }
 
+std::istream &operator >> (std::istream &sin, Todo &todo) {
+    int _id;
+    std::string _title;
+    bool _completed;
+    sin >> _id >> _title >> _completed;
+    todo.id(_id);
+    todo.title(_title);
+    todo.completed(_completed);
+    return sin;
+}
+
 #endif //CPP_TODOS_TODO_H

@@ -70,6 +70,9 @@ private:
         int todo_id = current_file_index + 1;
         todo.id(todo_id);
         std::ofstream fout(default_file_db, std::ios_base::app);
+        auto title = todo.title();
+        std::replace(title.begin(), title.end(), ' ', '^');
+        todo.title(title);
         fout << todo.id() << " " << todo.title() << " " << todo.completed() << "\n";
         fout.close();
         current_file_index  = todo_id;
@@ -78,20 +81,12 @@ private:
 
     std::vector<Todo> list_from_file() {
         std::vector<Todo> todos;
-        std::string currentLine;
+        Todo currentTodo;
         std::ifstream fin(default_file_db);
-        while(getline(fin, currentLine)) {
-            Todo currentTodo;
-            int id;
-            std::string title;
-            int _completed = std::stoi(currentLine.substr(currentLine.length()-1));
-            bool  completed = _completed == 1 ? true : false;
-            int index = currentLine.find(' ');
-            id = std::stoi(currentLine.substr(0, index));
-            title = currentLine.substr(index, currentLine.length()-1-index );
-            currentTodo.id(id);
+        while(fin >> currentTodo) {
+            auto title = currentTodo.title();
+            std::replace(title.begin(), title.end(), '^', ' ');
             currentTodo.title(title);
-            currentTodo.completed(completed);
             todos.push_back(currentTodo);
         }
         fin.close();
@@ -100,18 +95,12 @@ private:
 
     Todo get_from_file(int id) {
         Todo todo;
-        std::string currentLine;
         std::ifstream fin(default_file_db);
-        while(getline(fin, currentLine)) {
-            int index = currentLine.find(' ');
-            int t_id = std::stoi(currentLine.substr(0, index));
-            if (t_id == id) {
-                todo.id(id);
-                int _completed = std::stoi(currentLine.substr(currentLine.length() - 1));
-                bool t_completed = _completed == 1 ? true : false;
-                todo.completed(t_completed);
-                std::string t_title = currentLine.substr(index, currentLine.length() - 1 - index);
-                todo.title(t_title);
+        while(fin >> todo) {
+            if (todo.id() == id) {
+                auto title = todo.title();
+                std::replace(title.begin(), title.end(), '^', ' ');
+                todo.title(title);
                 break;
             }
         }
@@ -135,6 +124,11 @@ private:
         std::ofstream fout(default_file_index_db);
         fout << current_file_index;
         fout.close();
+    }
+
+    void delete_from_file(int id) {
+        std::fstream fs(default_file_db);
+
     }
 
 
