@@ -48,6 +48,17 @@ public:
         }
     }
 
+    Todo get(int id) {
+        switch (_persistence) {
+            case Persistence::FILE:
+                return get_from_file(id);
+            case Persistence::DB:
+                return get_from_file(id);
+            default:
+                return get_from_file(id);
+        }
+    }
+
 
 private:
     Persistence _persistence;
@@ -58,8 +69,6 @@ private:
     void save_to_file(Todo &todo) {
         int todo_id = current_file_index + 1;
         todo.id(todo_id);
-        std::cout << "Current index is " << current_file_index << "\n";
-        std::cout << "Saving todo " << todo.title() << " to file\n";
         std::ofstream fout(default_file_db, std::ios_base::app);
         fout << todo.id() << " " << todo.title() << " " << todo.completed() << "\n";
         fout.close();
@@ -79,13 +88,35 @@ private:
             bool  completed = _completed == 1 ? true : false;
             int index = currentLine.find(' ');
             id = std::stoi(currentLine.substr(0, index));
-            title = currentLine.substr(index, currentLine.length()-2);
+            title = currentLine.substr(index, currentLine.length()-1-index );
             currentTodo.id(id);
             currentTodo.title(title);
             currentTodo.completed(completed);
             todos.push_back(currentTodo);
         }
+        fin.close();
         return todos;
+    }
+
+    Todo get_from_file(int id) {
+        Todo todo;
+        std::string currentLine;
+        std::ifstream fin(default_file_db);
+        while(getline(fin, currentLine)) {
+            int index = currentLine.find(' ');
+            int t_id = std::stoi(currentLine.substr(0, index));
+            if (t_id == id) {
+                todo.id(id);
+                int _completed = std::stoi(currentLine.substr(currentLine.length() - 1));
+                bool t_completed = _completed == 1 ? true : false;
+                todo.completed(t_completed);
+                std::string t_title = currentLine.substr(index, currentLine.length() - 1 - index);
+                todo.title(t_title);
+                break;
+            }
+        }
+        fin.close();
+        return todo;
     }
 
     void save_to_db(Todo &todo) {
@@ -102,7 +133,6 @@ private:
 
     void save_current_index() {
         std::ofstream fout(default_file_index_db);
-        std::cout << "Saving the index " << current_file_index << "\n";
         fout << current_file_index;
         fout.close();
     }

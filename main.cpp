@@ -3,6 +3,8 @@
 #include "todo.h"
 #include "command.h"
 #include "api.h"
+#include "exceptions.h"
+
 
 int main(int argc, char *argv[]) {
     std::string title {"Sample todo title"};
@@ -26,9 +28,21 @@ int main(int argc, char *argv[]) {
         }
 
         if (command == "create") {
-            controller.create();
+            try {
+                controller.create();
+            }catch (std::invalid_argument &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }catch (std::exception &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }
         } else if (command == "get") {
-            std::cout << "Getting todo\n";
+            try {
+                controller.get();
+            }catch (TodoNotFoundException &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }catch (std::invalid_argument &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }
         } else if (command == "list") {
             controller.list();
         } else if (command == "edit") {
