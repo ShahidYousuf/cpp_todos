@@ -48,7 +48,9 @@ public:
 };
 
 std::ostream& operator << (std::ostream &out, Todo &todo) {
-    out << todo.id() << " " << todo.title() << (todo.completed() ? " [complete]" : " [pending]") << "\n";
+    auto status = todo.completed() ? "\033[1;32m completed\033[0m" : "\033[1;33m pending\033[0m";
+    auto id = "\033[1;34m" + std::to_string(todo.id()) + "\033[0m";
+    out << id << " " << todo.title() << status << "\n";
     return out;
 }
 
