@@ -47,4 +47,9 @@ public:
 
 };
 
+std::ostream& operator << (std::ostream &out, Todo &todo) {
+    out << todo.id() << " " << todo.title() << (todo.completed() ? " [complete]" : " [pending]") << "\n";
+    return out;
+}
+
 #endif //CPP_TODOS_TODO_H

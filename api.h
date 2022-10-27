@@ -29,7 +29,7 @@ public:
     void list() {
         auto todos = _store.list();
         for (auto todo: todos) {
-            std::cout << todo.id() << " " << todo.title() << " " << todo.completed() << "\n";
+            std::cout << todo;
         }
     }
 
@@ -44,7 +44,7 @@ public:
         if (todo.title().empty() || todo.title().length() < 1) {
             throw TodoNotFoundException(id);
         }
-        std::cout << todo.id() << " " << todo.title() << " " << todo.completed() << "\n";
+        std::cout << todo;
     }
 private:
     Store _store;
