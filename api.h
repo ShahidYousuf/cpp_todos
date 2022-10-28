@@ -46,6 +46,17 @@ public:
         }
         std::cout << todo;
     }
+
+    void remove() {
+        std::cout << "Enter todo id to remove: ";
+        int id;
+        std::cin >> id;
+        if (id <=0) {
+            throw std::invalid_argument("Invalid value for id");
+        }
+        _store.remove(id);
+        std::cout << "Todo with id " << id << " removed successfully\n";
+    }
 private:
     Store _store;
 };

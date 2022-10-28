@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     Store store = Store(Store::Persistence::FILE);
     Controller controller = Controller(store);
 
-    std::array<std::string, 5> commands {"get", "list", "create", "edit", "delete"};
+    std::array<std::string, 6> commands {"get", "list", "create", "edit", "delete", "done"};
     if (argc == 1) {
         std::cout << "Please issue one of the following commands:\n";
         for (const auto c: commands) {
@@ -46,9 +46,17 @@ int main(int argc, char *argv[]) {
         } else if (command == "list") {
             controller.list();
         } else if (command == "edit") {
-            std::cout << "Editing todo\n";
+
         } else if (command == "delete") {
-            std::cout << "Deleting todo\n";
+            try {
+                controller.remove();
+            }catch (TodoNotFoundException &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }catch (std::invalid_argument &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }
+        } else if (command == "done") {
+
         }
 
 

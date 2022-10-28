@@ -59,6 +59,17 @@ public:
         }
     }
 
+    void remove(int id) {
+        switch (_persistence) {
+            case Persistence::FILE:
+                return delete_from_file(id);
+            case Persistence::DB:
+                return delete_from_file(id);
+            default:
+                return delete_from_file(id);
+        }
+    }
+
 
 private:
     Persistence _persistence;
@@ -79,14 +90,24 @@ private:
         save_current_index();
     }
 
-    std::vector<Todo> list_from_file() {
+    void refresh_after_edit_or_delete(std::vector<Todo> &todos) {
+        std::ofstream fout(default_file_db);
+        for (auto todo: todos) {
+            fout << todo.id() << " " << todo.title() << " " << todo.completed() << "\n";
+        }
+        fout.close();
+    }
+
+    std::vector<Todo> list_from_file(bool raw=false) {
         std::vector<Todo> todos;
         Todo currentTodo;
         std::ifstream fin(default_file_db);
         while(fin >> currentTodo) {
-            auto title = currentTodo.title();
-            std::replace(title.begin(), title.end(), '^', ' ');
-            currentTodo.title(title);
+            if (not raw) {
+                auto title = currentTodo.title();
+                std::replace(title.begin(), title.end(), '^', ' ');
+                currentTodo.title(title);
+            }
             todos.push_back(currentTodo);
         }
         fin.close();
@@ -127,8 +148,15 @@ private:
     }
 
     void delete_from_file(int id) {
-        std::fstream fs(default_file_db);
-
+        auto todos = list_from_file(true);
+        auto no_todo = std::remove_if(todos.begin(), todos.end(), [id](auto item) -> bool {
+            return item.id() == id;
+        });
+        if (no_todo == todos.end()) {
+            return;
+        }
+        todos.erase(no_todo, todos.end());
+        refresh_after_edit_or_delete(todos);
     }
 
 
