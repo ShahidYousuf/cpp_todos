@@ -92,6 +92,17 @@ public:
         }
     }
 
+    void edit(int id, std::string &title) {
+        switch (_persistence) {
+            case Persistence::FILE:
+                return edit_todo_title_from_file(id, title);
+            case Persistence::DB:
+                return edit_todo_title_from_file(id, title);
+            default:
+                return edit_todo_title_from_file(id, title);
+        }
+    }
+
 
 private:
     Persistence _persistence;
@@ -199,6 +210,19 @@ private:
         std::transform(todos.begin(), todos.end(), todos.begin(), [id](auto todo) -> Todo {
             if ( todo.id() == id) {
                 todo.completed(false);
+            }
+            return todo;
+        });
+        refresh_after_edit_or_delete(todos);
+    }
+
+    void edit_todo_title_from_file(int id, std::string &title) {
+        // change title of a todo_item
+        std::replace(title.begin(), title.end(), ' ', '^');
+        auto todos = list_from_file(true);
+        std::transform(todos.begin(), todos.end(), todos.begin(), [id, &title](auto todo) -> Todo {
+            if (todo.id() == id) {
+                todo.title(title);
             }
             return todo;
         });

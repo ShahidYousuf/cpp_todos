@@ -46,7 +46,13 @@ int main(int argc, char *argv[]) {
         } else if (command == "list") {
             controller.list();
         } else if (command == "edit") {
-
+            try {
+                controller.edit();
+            }catch (TodoNotFoundException &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }catch (std::invalid_argument &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+            }
         } else if (command == "delete") {
             try {
                 controller.remove();

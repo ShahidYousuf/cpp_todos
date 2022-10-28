@@ -80,6 +80,29 @@ public:
         std::cout << "Todo with id " << id << " unchecked (marked pending) successfully\n";
     }
 
+    void edit() {
+        std::cout << "Enter todo id to edit the title: ";
+        int id;
+        std::string title;
+        std::cin >> id;
+        if (id <=0) {
+            throw std::invalid_argument("Invalid value for id");
+        }
+        Todo todo = _store.get(id);
+        if (todo.title().empty() || todo.title().length() < 1) {
+            throw TodoNotFoundException(id);
+        }
+        std::cout << "You are editing the following todo.\n" << todo;
+        std::cout << "Enter new title: ";
+        // get rid of white space that previous std::cin call ignores and leaves as garbage
+        std::getline(std::cin >> std::ws, title);
+        if(title.empty() || title.length() < 1) {
+            throw std::invalid_argument("Todo title cannot be empty");
+        }
+        _store.edit(id, title);
+        std::cout << "Todo with id " << id << " edited successfully\n";
+    }
+
 private:
     Store _store;
 };
