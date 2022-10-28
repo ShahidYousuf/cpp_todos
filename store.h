@@ -70,6 +70,28 @@ public:
         }
     }
 
+    void check(int id) {
+        switch (_persistence) {
+            case Persistence::FILE:
+                return check_todo_from_file(id);
+            case Persistence::DB:
+                return check_todo_from_file(id);
+            default:
+                return check_todo_from_file(id);
+        }
+    }
+
+    void uncheck(int id) {
+        switch (_persistence) {
+            case Persistence::FILE:
+                return uncheck_todo_from_file(id);
+            case Persistence::DB:
+                return uncheck_todo_from_file(id);
+            default:
+                return uncheck_todo_from_file(id);
+        }
+    }
+
 
 private:
     Persistence _persistence;
@@ -156,6 +178,30 @@ private:
             return;
         }
         todos.erase(no_todo, todos.end());
+        refresh_after_edit_or_delete(todos);
+    }
+
+    void check_todo_from_file(int id) {
+        // marks a todo_item as done
+        auto todos = list_from_file(true);
+        std::transform(todos.begin(), todos.end(), todos.begin(), [id](auto todo) -> Todo {
+            if ( todo.id() == id) {
+                todo.completed(true);
+            }
+            return todo;
+        });
+        refresh_after_edit_or_delete(todos);
+    }
+
+    void uncheck_todo_from_file(int id) {
+        // marks a todo_item as done
+        auto todos = list_from_file(true);
+        std::transform(todos.begin(), todos.end(), todos.begin(), [id](auto todo) -> Todo {
+            if ( todo.id() == id) {
+                todo.completed(false);
+            }
+            return todo;
+        });
         refresh_after_edit_or_delete(todos);
     }
 

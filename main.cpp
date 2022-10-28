@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     Store store = Store(Store::Persistence::FILE);
     Controller controller = Controller(store);
 
-    std::array<std::string, 6> commands {"get", "list", "create", "edit", "delete", "done"};
+    std::array<std::string, 7> commands {"get", "list", "create", "edit", "delete", "check", "uncheck"};
     if (argc == 1) {
         std::cout << "Please issue one of the following commands:\n";
         for (const auto c: commands) {
@@ -55,8 +55,10 @@ int main(int argc, char *argv[]) {
             }catch (std::invalid_argument &e) {
                 std::cerr << "Error: " << e.what() << "\n";
             }
-        } else if (command == "done") {
-
+        } else if (command == "check") {
+            controller.check();
+        } else if (command == "uncheck") {
+            controller.uncheck();
         }
 
 

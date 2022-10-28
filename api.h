@@ -57,6 +57,29 @@ public:
         _store.remove(id);
         std::cout << "Todo with id " << id << " removed successfully\n";
     }
+
+    void check() {
+        std::cout << "Enter todo id to mark as checked (complete): ";
+        int id;
+        std::cin >> id;
+        if (id <=0) {
+            throw std::invalid_argument("Invalid value for id");
+        }
+        _store.check(id);
+        std::cout << "Todo with id " << id << " checked (completed) successfully\n";
+    }
+
+    void uncheck() {
+        std::cout << "Enter todo id to mark as unchecked (mark pending): ";
+        int id;
+        std::cin >> id;
+        if (id <=0) {
+            throw std::invalid_argument("Invalid value for id");
+        }
+        _store.uncheck(id);
+        std::cout << "Todo with id " << id << " unchecked (marked pending) successfully\n";
+    }
+
 private:
     Store _store;
 };
