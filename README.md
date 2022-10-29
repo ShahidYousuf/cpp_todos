@@ -3,7 +3,7 @@ A console todo app :pushpin: written in C++ with file and DB persistence.
 
 :triangular_flag_on_post: Next Target 
   
-  :point_right: Command line option to choose DB or File persistence. Right now, by defalt, it is File persistence.
+  :point_right: Command line option to choose DB or File persistence. Right now, by default, it has file persistence.
 #### Build the project
 ```bash
 g++ -o todo main.cpp --std c++17 
@@ -18,7 +18,7 @@ todo help -c create
 ##### Shows help and list of commands
 ```bash
 todo
-tood help
+todo help
 ```
 ##### Create a new todo
 ```bash
@@ -28,7 +28,7 @@ todo create --title "Sample todo title."
 ```bash
 todo list
 todo list --status complete
-tood list --status pending
+todo list --status pending
 ```
 ##### Get a single todo
 ```bash
@@ -38,7 +38,7 @@ todo get -i 5
 ##### Edit todo title
 ```bash
 todo edit -i 5 -t "new updated todo title."
-todo ecit --index 5 --title "new updated todo title."
+todo edit --index 5 --title "new updated todo title."
 ```
 ##### Delete todo
 ```bash
