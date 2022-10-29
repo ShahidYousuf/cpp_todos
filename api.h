@@ -9,16 +9,107 @@
 #include "todo.h"
 #include "store.h"
 #include "exceptions.h"
+#include "command.h"
 
 class Controller {
 public:
     Controller(Store &store): _store(store) {}
 
-    void create() {
-        std::string title;
+    void help() {
+        std::cout << "Help: Please use one of the following commands.\n";
+        std::cout << Command::LIST << " " << Command::GET << " " << Command::CREATE << " ";
+        std::cout << Command::EDIT << " " << Command::DELETE << " " << Command::CHECK << " ";
+        std::cout << Command::UNCHECK << " " << Command::HELP << "\n";
+        std::cout << "To know more about a command, enter\n";
+        std::cout << "todo help -c [command]\ntodo help --command [command]\n";
+    }
+
+    void help(Command command) {
+        switch (command) {
+            case Command::LIST:
+                return help_list();
+            case Command::GET:
+                return help_get();
+            case Command::CREATE:
+                return help_create();
+            case Command::EDIT:
+                return help_edit();
+            case Command::DELETE:
+                return help_delete();
+            case Command::CHECK:
+                return help_check();
+            case Command::UNCHECK:
+                return help_uncheck();
+            case Command::HELP:
+                return help();
+            default:
+                return help();
+        }
+    }
+
+    void help_get() {
+        std::cout << "Get a todo with a given unique id.\n";
+        std::cout << "Format:\n";
+        std::cout << "todo get -i | --index <unique id>\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo get -i 5\t - get todo with id 5\n";
+        std::cout << "todo get --index 5\t - get todo with id 5\n";
+    }
+
+    void help_list() {
+        std::cout << "List all todos, optionally excepts options to list completed or pending only todos.\n";
+        std::cout << "Format:\n";
+        std::cout << "todo list [-s | --status [completed | pending]]\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo list\t - list all todos\n";
+        std::cout << "todo list -s completed\t - list all completed todos.\n";
+        std::cout << "todo list -s pending\t - list all pending todos.\n";
+        std::cout << "todo list --status pending\t - list all pending todos.\n";
+    }
+    void help_create() {
+        std::cout << "Create a new todo with a valid title.\n";
+        std::cout << "Format:\n";
+        std::cout << "todo create -t | --title \"<todo title here>\"\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo create -t \"A sample todo item\"\t - creates a new todo with the given title.\n";
+        std::cout << "todo create --title \"A sample todo item\"\t - creates a new todo with the given title.\n";
+    }
+    void help_edit() {
+        std::cout << "Edits a todo title using a valid unique id\n";
+        std::cout << "Format:\n";
+        std::cout << "todo edit -i | --index <unique id> -t | --title \"<new todo title here>\"\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo edit -i 5 -t \"A sample todo item edited\"\t - edits todo title with the given id\n";
+        std::cout << "todo edit --index 5 --title \"A sample todo item edited\"\t - edits todo title with the given id\n";
+    }
+    void help_delete() {
+        std::cout << "Delete a todo with a given id\n";
+        std::cout << "Format:\n";
+        std::cout << "todo delete -i | --index <unique id>\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo delete -i 5\t - delete todo with the given id.\n";
+        std::cout << "todo delete --index 5\t - delete todo with the given id.\n";
+    }
+    void help_check() {
+        std::cout << "Checks or marks a todo complete with a given id.\n";
+        std::cout << "Format:\n";
+        std::cout << "todo check -i | --index <unique id>\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo check -i 5\t - checks or marks todo with given id as complete.\n";
+        std::cout << "todo check --index 5\t - checks or marks todo with given id as complete.\n";
+    }
+
+    void help_uncheck() {
+        std::cout << "Unchecks or marks a todo pending/incomplete with a given id.\n";
+        std::cout << "Format:\n";
+        std::cout << "todo uncheck -i | --index <unique id>\n";
+        std::cout << "Examples:\n";
+        std::cout << "todo uncheck -i 5\t - unchecks or marks todo with given id as pending/incomplete.\n";
+        std::cout << "todo uncheck --index 5\t - unchecks or marks todo with given id as pending/incomplete.\n";
+    }
+
+    void create(std::string title) {
         bool completed { false };
-        std::cout << "Enter todo title: ";
-        std::getline(std::cin, title);
         if(title.empty() || title.length() < 1) {
             throw std::invalid_argument("Todo title cannot be empty");
         }
@@ -33,10 +124,27 @@ public:
         }
     }
 
-    void get() {
-        std::cout << "Enter todo id to fetch its details ";
-        int id;
-        std::cin >> id;
+    void list_complete() {
+        auto todos = _store.list();
+        for (auto todo: todos) {
+            if (!todo.completed()) {
+                continue;
+            }
+            std::cout << todo;
+        }
+    }
+
+    void list_pending() {
+        auto todos = _store.list();
+        for (auto todo: todos) {
+            if (todo.completed()) {
+                continue;
+            }
+            std::cout << todo;
+        }
+    }
+
+    void get(int id) {
         if (id <=0) {
             throw std::invalid_argument("Invalid value for id");
         }
@@ -47,10 +155,7 @@ public:
         std::cout << todo;
     }
 
-    void remove() {
-        std::cout << "Enter todo id to remove: ";
-        int id;
-        std::cin >> id;
+    void remove(int id) {
         if (id <=0) {
             throw std::invalid_argument("Invalid value for id");
         }
@@ -58,10 +163,7 @@ public:
         std::cout << "Todo with id " << id << " removed successfully\n";
     }
 
-    void check() {
-        std::cout << "Enter todo id to mark as checked (complete): ";
-        int id;
-        std::cin >> id;
+    void check(int id) {
         if (id <=0) {
             throw std::invalid_argument("Invalid value for id");
         }
@@ -69,10 +171,7 @@ public:
         std::cout << "Todo with id " << id << " checked (completed) successfully\n";
     }
 
-    void uncheck() {
-        std::cout << "Enter todo id to mark as unchecked (mark pending): ";
-        int id;
-        std::cin >> id;
+    void uncheck(int id) {
         if (id <=0) {
             throw std::invalid_argument("Invalid value for id");
         }
@@ -80,11 +179,7 @@ public:
         std::cout << "Todo with id " << id << " unchecked (marked pending) successfully\n";
     }
 
-    void edit() {
-        std::cout << "Enter todo id to edit the title: ";
-        int id;
-        std::string title;
-        std::cin >> id;
+    void edit(int id, std::string title) {
         if (id <=0) {
             throw std::invalid_argument("Invalid value for id");
         }
@@ -92,10 +187,6 @@ public:
         if (todo.title().empty() || todo.title().length() < 1) {
             throw TodoNotFoundException(id);
         }
-        std::cout << "You are editing the following todo.\n" << todo;
-        std::cout << "Enter new title: ";
-        // get rid of white space that previous std::cin call ignores and leaves as garbage
-        std::getline(std::cin >> std::ws, title);
         if(title.empty() || title.length() < 1) {
             throw std::invalid_argument("Todo title cannot be empty");
         }
