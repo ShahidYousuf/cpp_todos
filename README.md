@@ -1,5 +1,9 @@
 # Todos App in C++
 A console todo app :pushpin: written in C++ with file and DB persistence.
+
+:triangular_flag_on_post: Next Target 
+  
+  :point_right: Command line option to choose DB or File persistence. Right now, by defalt, it is File persistence.
 #### Build the project
 ```bash
 g++ -o todo main.cpp --std c++17 
