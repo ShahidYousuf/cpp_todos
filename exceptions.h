@@ -16,4 +16,11 @@ public:
     }
 };
 
+class HomeEnvNotFoundException : public std::exception {
+public:
+    std::string what() {
+        return "Cannot read environment variable HOME, have you set it?\n";
+    }
+};
+
 #endif //CPP_TODOS_EXCEPTIONS_H

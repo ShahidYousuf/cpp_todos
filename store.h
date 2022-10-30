@@ -8,7 +8,9 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include "sys/types.h"
 #include "todo.h"
+#include "exceptions.h"
 
 class Store {
 
@@ -19,12 +21,18 @@ public:
     };
     Store(Persistence persistence): _persistence(persistence) {
         if (_persistence == Store::Persistence::FILE) {
+            try {
+                init_file_db();
+            } catch (HomeEnvNotFoundException &e) {
+                std::cerr << "Error: " << e.what();
+                exit(1);
+            } catch (std::exception &e) {
+                std::cerr << "Error: " << e.what() << "\n";
+                exit(1);
+            }
             init_current_index();
         }
     };
-//    ~Store() {
-//        save_current_index();
-//    }
 
     void save(Todo &todo) {
         switch (_persistence) {
@@ -107,8 +115,19 @@ public:
 private:
     Persistence _persistence;
     int current_file_index;
-    std::string default_file_db {".todo_db"};
-    std::string default_file_index_db {".todo_db_index"};
+    std::string default_file_db;
+    std::string default_file_index_db;
+
+    void init_file_db() {
+        const char *home_dir = getenv("HOME");
+        if (home_dir == nullptr) {
+            throw HomeEnvNotFoundException();
+        }
+        std::string default_file_db_name {"/.todo_db"};
+        default_file_db = home_dir + default_file_db_name;
+        std::string default_file_index_db_name {"/.todo_db_index"};
+        default_file_index_db = home_dir + default_file_index_db_name;
+    }
 
     void save_to_file(Todo &todo) {
         int todo_id = current_file_index + 1;

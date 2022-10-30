@@ -181,6 +181,10 @@ CommandWithOptions getCommand(std::vector<std::string> &arguments) {
         commandWithOptions.command(Command::HELP);
         commandWithOptions.clear_options();
         commandWithOptions.option(option, value);
+    } else {
+        commandWithOptions.clear_options();
+        std::string value = "help";
+        commandWithOptions.option(Option::NONE, value);
     }
     return commandWithOptions;
 }

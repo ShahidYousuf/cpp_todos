@@ -22,6 +22,8 @@ int main(int argc, char *argv[]) {
         router.route(controller, commandWithOptions);
     } catch (TodoNotFoundException &e) {
         std::cerr << "Error: " << e.what() << "\n";
+    } catch (HomeEnvNotFoundException &e) {
+        std::cerr << "Error: " << e.what();
     } catch (std::invalid_argument &e) {
         std::cerr << "Error: " << e.what() << "\n";
     } catch (std::exception &e) {
