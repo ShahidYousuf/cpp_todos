@@ -16,6 +16,7 @@ public:
     Controller(Store &store): _store(store) {}
 
     void help() {
+        std::cout << "Todo version: 0.1 30 Oct, 2022\n";
         std::cout << "Help: Please use one of the following commands.\n";
         std::cout << Command::LIST << " " << Command::GET << " " << Command::CREATE << " ";
         std::cout << Command::EDIT << " " << Command::DELETE << " " << Command::CHECK << " ";
