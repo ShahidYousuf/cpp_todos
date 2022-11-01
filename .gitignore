@@ -1,6 +1,5 @@
 .idea
 cmake-build-debug/
-CMakeLists.txt
 todo
 .todo_db
 .todo_db_index
